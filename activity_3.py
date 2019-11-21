@@ -19,7 +19,7 @@ book_model = api.model('Book', {
 })
 
 
-@api.route('/books/<int:id>')
+@api.route('/books/<int :id>')
 class Books(Resource):
     def get(self, id):
         if id not in df.index:

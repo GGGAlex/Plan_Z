@@ -1,7 +1,7 @@
 import pandas as pd
 
 from matplotlib import pyplot as plot
-# df = pd.read_csv("mushrooms.csv")
+df = pd.read_csv("mushrooms.csv")
 # # df['id'] = [i + 1 for i in range(len(df))]
 #
 #

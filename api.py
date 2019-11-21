@@ -10,7 +10,7 @@ api = Api(app)
 
 # The following is the schema of Mushrooms
 # ##################################################################################### Need to be modified
-book_model = api.model('Mushrooms', {
+mushrooms_model = api.model('Mushrooms', {
     # 'Flickr_URL': fields.String,
     # 'Publisher': fields.String,
     # 'Author': fields.String,
@@ -21,9 +21,9 @@ book_model = api.model('Mushrooms', {
 })
 # ##################################################################################### End 
 
-@api.route('/mushroom/data/<string: feature_class>/<string: feature')
+@api.route('/mushroom/data/<feature_class>')
 class Mushrooms(Resource):
-    def get(self, feature_class, feature):
+    def get(self, feature_class):
         if feature_class not in df.columns:
             api.abort(404, "{} doesn't exist".format(feature_class))
         else:
@@ -31,7 +31,7 @@ class Mushrooms(Resource):
         	df2 = df1.loc[df1[feature_class] == feature]
         	total = len(df2)
         	df2 = df2.groupby('class').count()
-        	e_number = df2.loc['e', feature]
+        	e_number = df2.loc['e', feature_class]
         return round(e_number * 100 / total, 2)
 
     # def delete(self, id):
