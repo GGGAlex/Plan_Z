@@ -15,7 +15,6 @@ df.drop(['budget_x','keywords','genres','homepage','id','original_title','rating
          'popularity'], axis=1, inplace=True)
 df.rename(columns={'original_language': 'language','runtime_x': 'runtime'}, inplace=True)
 
-df.set_index('title', inplace=True)
+#df.set_index('title', inplace=True)
 df.dropna(inplace=True)
-
-print(df.to_string())
+df
