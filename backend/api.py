@@ -70,10 +70,10 @@ class getMovies(Resource):
 @api.route('/movies/analysis/<int:year>')
 class getYearMovies(Resource):
     def get(self,year):
-        # if year not in year_movie_df.index:
-        #     api.abort(404,"Movie {} doesn't exist".format(year))
+        if year not in year_movie_df.index:
+            api.abort(404,"Movie {} doesn't exist".format(year))
             #add new movie link
-        movie = df.loc[2006].to_json()
+        movie = df.loc[year].to_json()
         #add new movie link
         return movie
         #add a link to movie page?
