@@ -18,7 +18,7 @@ df.rename(columns={'original_language': 'language','runtime_x': 'runtime'}, inpl
 #df.set_index('title', inplace=True)
 df.dropna(inplace=True)
 
-def movie_of_year():
+def movie_of_year(year):
     # 2006 - 2016
     df['release_date'] = df['release_date'].str.replace('-', '')
     df['release_date'] = df['release_date'].map(lambda x: int(x)//10000)
@@ -28,8 +28,9 @@ def movie_of_year():
                         'genre', 'vote_count'], axis=1, inplace=True)
     movie_of_year = movie_of_year[movie_of_year.release_date>2005].reset_index()
     movie_of_year.drop(['index'], axis=1, inplace=True)
-    print(movie_of_year.to_string())
-    movie_of_year.to_csv('movie_of_year.csv')
+    movie_of_year = movie_of_year.groupby(by='release_date')
+    print(movie_of_year.get_group(year).to_string())
+    #movie_of_year.to_csv('movie_of_year.csv')
 
 def language_of_year():
     #2010 - 2016
@@ -54,7 +55,15 @@ def movie_of_country():
 
     #print(movie_of_country)
 
+def type_of_movie():
+    movie_type = df.groupby(by='genre')['title'].count()
+    type_of_movie = movie_type.to_frame()
+    type_of_movie.rename(columns={'title':'number'}, inplace=True)
+    print(type_of_movie)
 
-movie_of_year()
+
+year = input('please input a year(2006-2016):')
+movie_of_year(int(year))
 language_of_year()
 movie_of_country()
+type_of_movie()
