@@ -2,6 +2,7 @@ import pandas as pd
 from flask import Flask
 from flask import request
 import json
+import csv
 from flask_restplus import Api,Resource,fields
 app = Flask(__name__)
 api = Api(app)
@@ -94,6 +95,18 @@ class getTopMovies(Resource):
 #         #add new movie link
 #         return movie
 #         #add a link to movie page?
+
+@api.route('/movies/logging')
+class writeLogging(Resource):
+    def push(self):
+        message = request.json
+        new_data = [message['IP_address'], message['Time'], message['Function']]
+        colNames = logging_df.columns
+        new_log_df = pd.DataFrame(data=new_data, columns=colNames)
+        complete_logging_df = pd.concat([logging_df, new_log_df], axis=0)
+        complete_logging_df.to_csv(logging_csv, index=False)
+        return {"message": "logging is update."} ,200
+
 @api.route('/movies/analysis/best_movie_year/<int:year>')
 class getYearMovies(Resource):
     def get(self, year):
@@ -104,6 +117,7 @@ class getYearMovies(Resource):
         # add new movie link
         return movie
         # add a link to movie page?
+
 
 @api.route('/movies/analysis/general')
 class getMovietypes(Resource):
@@ -147,9 +161,17 @@ if __name__ == '__main__':
     csv_file1 = '/home/kevin/Documents/9321/github/Plan_Z/data_analysis/tmdb_5000_movies.csv'
     csv_file2 = '/home/kevin/Documents/9321/github/Plan_Z/data_analysis/movies.csv'
     year_movie_csv = '/home/kevin/Documents/9321/github/Plan_Z/data_analysis/movie_of_year.csv'
+
+
+    logging_csv = "/home/kevin/Documents/9321/github/Plan_Z/logging.csv"
+    with open(logging_csv,'wb') as f:
+        csv_write = csv.writer(f)
+        csv_head = ["IP_address", "Time", "Function"]
+        csv_write.writerow(csv_head)
     
     df1 = pd.read_csv(csv_file1)
     df2 = pd.read_csv(csv_file2)
+    logging_df = pd.read_csv(logging_csv)
     year_movie_df = pd.read_csv(year_movie_csv)
    
     year_movie_df.set_index('release_date', inplace=True)
