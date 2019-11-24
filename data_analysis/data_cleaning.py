@@ -23,7 +23,7 @@ def movie_of_year():
     df['release_date'] = df['release_date'].str.replace('-', '')
     df['release_date'] = df['release_date'].map(lambda x: int(x)//10000)
     movie_of_year = df.groupby('release_date', group_keys=False).apply(lambda x: x.sort_values('vote_average',ascending=False))\
-        .groupby('release_date').first().reset_index()
+        .groupby('release_date').head(5)
     movie_of_year.drop(['overview', 'writer', 'star', 'runtime', 'company',
                         'genre', 'vote_count'], axis=1, inplace=True)
     movie_of_year = movie_of_year[movie_of_year.release_date>2005].reset_index()
