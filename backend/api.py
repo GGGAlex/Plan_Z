@@ -42,7 +42,7 @@ class Movies(Resource):
 @api.route('/movies')
 class getMovies(Resource):
     def get(self):
-        movies = df.to_json(orient='index')
+        movies = df.to_json(orient='records')
         return json.loads(movies)
     @api.expect(movie_model)
     def post(self):
