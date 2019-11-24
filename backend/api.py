@@ -66,7 +66,7 @@ class getMovies(Resource):
         # df.append(book, ignore_index=True)
         return {"message": "Movie {} is created".format(movie_title)}, 201
         # return{'hello':'world'}
-@api.route('/movies/analysis')
+@api.route('/movies/analysis/top5movies')
 class getTopMovies(Resource):
     def get(self):
         df['release_date'] = df['release_date'].str.replace('-', '')
@@ -91,7 +91,46 @@ class getTopMovies(Resource):
 #         #add new movie link
 #         return movie
 #         #add a link to movie page?
+@api.route('/movies/analysis/best_movie_year/<int:year>')
+class getYearMovies(Resource):
+    def get(self, year):
+        if year not in year_movie_df.index:
+            api.abort(404, "Movie {} doesn't exist".format(year))
+            # add new movie link
+        movie = df.loc[year].to_json()
+        # add new movie link
+        return movie
+        # add a link to movie page?
 
+
+#no year!!
+@api.route('/movies/analysis/best_movie_year/')
+class yearMovies(Resource):
+    def get(self):
+        movie = year_movie_df.to_json(orient='records')
+        return json.loads(movie)
+@api.route('/movies/analysis/country/<string:year>')
+class analysisCountry(Resource):
+    def get(self, year):
+        
+        country = df.copy()
+        country['release_date'] = country['release_date'].map(lambda x: x.split("-")[0])
+        if year not in list(country['release_date'].values):
+            api.abort(404,"Year {} doesn't exist in database".format(year))
+        country.set_index('release_date', inplace=True)
+        country = country.loc[str(year)]
+        country = country.groupby('release_date')['country'].value_counts().reset_index(name='country_count')
+        country.drop(['release_date'], axis=1, inplace=True)
+        country.set_index('country', inplace=True)
+        dfjson = country.to_json()
+        return json.loads(dfjson)
+@api.route('/movies/analysis/country')
+class getCountryNum(Resource):
+    def get(self):
+        country = df.copy()
+        country = country['country'].value_counts().reset_index(name='country_count')
+        dfjson = country[:5].to_json(orient='records')
+        return json.loads(dfjson)
 
 if __name__ == '__main__':
     csv_file1 = '/home/kevin/Documents/9321/github/Plan_Z/data_analysis/tmdb_5000_movies.csv'
@@ -111,20 +150,6 @@ if __name__ == '__main__':
          'production_countries','tagline','released','votes','year','status','score',\
          'popularity'], axis=1, inplace=True)
     df.rename(columns={'original_language': 'language','runtime_x': 'runtime'}, inplace=True)
-    # df.rename(columns={'original_language': 'language','runtime_x': 'runtime'}, inplace=True)
-
-#df.set_index('title', inplace=True)
     df.dropna(inplace=True)
     app.run(debug=True)
-#df
 
-#     columns_to_drop =['budget', 'genres', 'homepage', 'id','original_language',
-#        'overview', 'popularity', 'production_companies',
-#        'production_countries', 'release_date', 'revenue', 'runtime',
-#        'spoken_languages', 'status', 'tagline','vote_average','vote_count']
-#     csv_file = "/home/kevin/Documents/9321/Plan_Z/tmdb_movie/tmdb_5000_movies.csv"
-#     df = pd.read_csv(csv_file)
-#     df.drop(columns_to_drop, inplace=True, axis=1)
-#     df.set_index('original_title', inplace=True)
-# #df.loc['Walter Forbes. [A novel.] By A. A']
-#     app.run(debug=True)
