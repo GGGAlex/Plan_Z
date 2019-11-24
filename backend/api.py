@@ -4,6 +4,9 @@ from flask import request
 import json
 import csv
 from flask_restplus import Api,Resource,fields
+import sys
+sys.path.append('/home/kevin/Documents/9321/github/Plan_Z/ML/classifier.py')
+import classifier as cla
 app = Flask(__name__)
 api = Api(app)
 # ['language', 'overview', 'release_date', 'runtime', 'title',
@@ -24,6 +27,18 @@ movie_model = api.model('Movie', {
     'star':fields.String, 
     'writer':fields.String,
 })
+@api.route('/machineLearning/<string:title>')
+class moviesRecommend(Resource):
+    def get(self,title):
+        if title not in list(df['title'].values):
+            api.abort(404,"Movie {} doesn't exist".format(title))
+            #add new movie link
+        a=cla.recommender()
+        qu = a.improved_recommendations(title)
+        #  df.drop(['title','vote_count','vote_average','y'], axis=1, inplace=True)
+        movie=qu.to_json(orient='records')
+        return json.loads(movie)
+
 @api.route('/movies/<string:title>')
 class Movies(Resource):
     def get(self,title):
@@ -184,5 +199,6 @@ if __name__ == '__main__':
          'popularity'], axis=1, inplace=True)
     df.rename(columns={'original_language': 'language','runtime_x': 'runtime'}, inplace=True)
     df.dropna(inplace=True)
+    # a=classifier.recommender()
     app.run(debug=True)
 
