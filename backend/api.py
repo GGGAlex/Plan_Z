@@ -26,16 +26,19 @@ movie_model = api.model('Movie', {
 @api.route('/movies/<string:title>')
 class Movies(Resource):
     def get(self,title):
-        if title not in df.index:
+        if title not in list(df['title'].values):
             api.abort(404,"Movie {} doesn't exist".format(title))
             #add new movie link
-        movie = dict(df.loc[title])
-        #add new movie link
-        return movie
+        movie_df = df.copy()
+        movie = (df.loc[df['title'] == title]).to_json(orient='records')
+        return json.loads(movie)
     def delete(self,title):
-        if title not in df.index:
+        if title not in list(df['title'].values):
             api.abort(404, "Movie {} doesn't exist".format(title))
-        df.drop(title,inplace=True)
+        deleteMovie = df[df['title'] == title].index
+ 
+        # Delete these row indexes from dataFrame
+        df.drop(deleteMovie , inplace=True)
         return {"message":"Movie {} is removed.".format(title)}
 
 @api.route('/movies')
