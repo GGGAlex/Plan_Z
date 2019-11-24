@@ -3,7 +3,6 @@ from flask import Flask
 from flask import request
 import json
 from flask_restplus import Api,Resource,fields
-
 app = Flask(__name__)
 api = Api(app)
 # ['language', 'overview', 'release_date', 'runtime', 'title',
@@ -67,16 +66,31 @@ class getMovies(Resource):
         # df.append(book, ignore_index=True)
         return {"message": "Movie {} is created".format(movie_title)}, 201
         # return{'hello':'world'}
-@api.route('/movies/analysis/<int:year>')
-class getYearMovies(Resource):
-    def get(self,year):
-        if year not in year_movie_df.index:
-            api.abort(404,"Movie {} doesn't exist".format(year))
-            #add new movie link
-        movie = df.loc[year].to_json()
-        #add new movie link
-        return movie
-        #add a link to movie page?
+@api.route('/movies/analysis')
+class getTopMovies(Resource):
+    def get(self):
+        df['release_date'] = df['release_date'].str.replace('-', '')
+        df['release_date'] = df['release_date'].map(lambda x: int(x)//10000)
+        movie_of_year = df.groupby('release_date', group_keys=False).apply(lambda x: x.sort_values('vote_average',ascending=False))\
+                    .groupby('release_date').head(5)
+        movie_of_year.drop(['overview', 'writer', 'star', 'runtime', 'company',
+                        'genre', 'vote_count'], axis=1, inplace=True)
+        movie_of_year = movie_of_year[movie_of_year.release_date>2005].reset_index()
+        movie_of_year.drop(['index'], axis=1, inplace=True)
+        #movie_of_year = movie_of_year.groupby(by='release_date')
+        #topmovie = movie_of_year.to_json()
+        topmovie = movie_of_year.to_json(orient='records')
+        return json.loads(topmovie)
+# @api.route('/movies/analysis/<int:year>')
+# class getYearMovies(Resource):
+#     def get(self,year):
+#         if year not in year_movie_df.index:
+#             api.abort(404,"Movie {} doesn't exist".format(year))
+#             #add new movie link
+#         movie = df.loc[year].to_json()
+#         #add new movie link
+#         return movie
+#         #add a link to movie page?
 
 
 if __name__ == '__main__':
