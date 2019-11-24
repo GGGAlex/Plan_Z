@@ -67,14 +67,28 @@ class getMovies(Resource):
         # df.append(book, ignore_index=True)
         return {"message": "Movie {} is created".format(movie_title)}, 201
         # return{'hello':'world'}
+@api.route('/movies/analysis/<int:year>')
+class getYearMovies(Resource):
+    def get(self,year):
+        # if year not in year_movie_df.index:
+        #     api.abort(404,"Movie {} doesn't exist".format(year))
+            #add new movie link
+        movie = df.loc[2006].to_json()
+        #add new movie link
+        return movie
+        #add a link to movie page?
 
 
 if __name__ == '__main__':
     csv_file1 = '/home/kevin/Documents/9321/github/Plan_Z/data_analysis/tmdb_5000_movies.csv'
     csv_file2 = '/home/kevin/Documents/9321/github/Plan_Z/data_analysis/movies.csv'
-
+    year_movie_csv = '/home/kevin/Documents/9321/github/Plan_Z/data_analysis/movie_of_year.csv'
+    
     df1 = pd.read_csv(csv_file1)
     df2 = pd.read_csv(csv_file2)
+    year_movie_df = pd.read_csv(year_movie_csv)
+   
+    year_movie_df.set_index('release_date', inplace=True)
 
     df2.rename(columns={'name': 'title'}, inplace=True)
     df = pd.merge(df1, df2, on='title')
