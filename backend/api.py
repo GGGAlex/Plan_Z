@@ -102,7 +102,15 @@ class getYearMovies(Resource):
         return movie
         # add a link to movie page?
 
-
+@api.route('/movies/analysis/general')
+class getMovietypes(Resource):
+    def get(self):
+        types = df.copy()
+        movie_type = types.groupby(by='genre')['title'].count()
+        type_of_movie = movie_type.to_frame()
+        type_of_movie.rename(columns={'title':'number'}, inplace=True)
+        typemovie = type_of_movie.to_json(orient='records')
+        return json.loads(typemovie)
 #no year!!
 @api.route('/movies/analysis/best_movie_year/')
 class yearMovies(Resource):
