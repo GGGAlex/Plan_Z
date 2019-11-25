@@ -7,7 +7,10 @@ import json
 import joblib
 
 apiApp = Flask(__name__)
-api = Api(apiApp)
+api = Api(apiApp,
+    default="Movie Recomandation",
+    title="Movie Dataset",
+    description='This is a movie recomandation system.')
 apiApp.debug = True
 
 # Api start
