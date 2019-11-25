@@ -1,0 +1,70 @@
+{% extends "home/layout.html" %}
+{% block content %}
+    <!-- Slider -->
+    <div id="slider" class="inspiro-slider slider-fullscreen arrows-large arrows-creative dots-creative"
+         data-height="400">
+        <!-- Slider 1 -->
+        <div class="slide background-overlay-dark kenburns" data-parallax-image="images/slider/2.jpg">
+            <!-- the context in slider -->
+            <div class="container">
+                <div class="slide-captions text-light">
+                    <h1 data-animate="fadeInUp" data-animate-delay="600">Post a Movie You Like</h1>
+                    <h4 data-animate="fadeInUp" data-animate-delay="1000">Let's Do This</h4>
+                    {% if login_user %}
+                    <a href="{{ url_for('home.post_movie') }}">
+                        {% else %}
+                    <a href="{{ url_for('home.login') }}">
+                    {% endif %}
+                    <button type="button" data-animate="fadeInUp" data-animate-delay="1000" class="btn btn-rounded btn-reveal btn-reveal-left"><span>Click it.</span><i class="fa fa-arrow-right"></i></button>
+                    </a>
+                </div>              
+            </div>
+        </div>
+    </div>
+    <!-- End Slider -->
+
+    <!-- Content -->
+    <section id="page-content">
+        <div class="container">
+            <div id="movie" class="grid-layout post-3-columns m-b-30" data-item="post-item">
+            <!-- Post item-->
+                {% for movie in pagination.items %}
+                <div class="post-item border">
+                    <div class="post-item-wrap">
+                        <div class="post-item-description">
+                            <h2><a href="#">{{ movie.title }}</a></h2>
+                            <span class="post-meta-date"><i class="fa fa-calendar-o"></i>release time: {{ movie.release_date }}</span>
+                            <p>Language: {{ movie.language }}</p>
+                            <p>Country: {{ movie.country }}</p>
+                            <p>Director: {{ movie.director }}</p>
+                            <p>Writer: {{ movie.writer }}</p>
+                            <p>Genre: {{ movie.genre }}</p>
+                            <p>Runtime: {{ movie.runtime }}</p>
+                            <p>Overview: {{ movie.overview }}</p>
+                            <p>Rating: {{ movie.vote_average }}/10.0</p>
+    {#                        <a href="#" class="item-link">Read More <i class="fa fa-arrow-right"></i></a>#}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            <!-- end: Post item-->
+            </div>
+            <ul class="pagination">
+                {% if pagination.has_prev %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('home.index', page=pagination.page - 1) }}"><i class="fa fa-angle-left"></i></a></li>
+                {% endif %}
+                {% for page_num in range(pagination.range_last + 1, pagination.range_next + 1) %}
+                    {% if page_num == pagination.page %}
+                        <li class="page-item active"><a class="page-link" href="{{ url_for('home.index', page=page_num) }}">{{ page_num }}</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('home.index', page=page_num) }}">{{ page_num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if pagination.has_next %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('home.index', page=pagination.page + 1) }}"><i class="fa fa-angle-right"></i></a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </section>
+    <!-- end: Contect-->
+{% endblock %}

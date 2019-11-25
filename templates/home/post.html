@@ -1,0 +1,95 @@
+{% extends "home/layout.html" %}
+{% block content %}
+    <!-- Page title -->
+    <section id="page-title">
+        <div class="container">
+            <div class="page-title">
+                <h1>Post a Movie</h1>
+            </div>
+            <div class="breadcrumb">
+                <ul>
+                    <li><a href="{{ url_for('home.index') }}">Index</a> </li>
+                    <li class="active"><a href="#">Forms</a> </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <!-- End: Page title -->
+    <!-- Content -->
+    <section id="page-content">
+        <div class="container col-lg-9">
+            <form action="{{ url_for('home.post_movie') }}" method="post">
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.title.label }}</label>
+                    {{ form.title }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">{{ form.overview.label }}</label>
+                    {{ form.overview }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.language.label }}</label>
+                    {{ form.language }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.country.label }}</label>
+                    {{ form.country }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.director.label }}</label>
+                    {{ form.director }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.writer.label }}</label>
+                    {{ form.writer }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.company.label }}</label>
+                    {{ form.company }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.runtime.label }}</label>
+                    {{ form.runtime }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.release_date.label }}</label>
+                    {{ form.release_date }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.genre.label }}</label>
+                    {{ form.genre }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.vote_average.label }}</label>
+                    {{ form.vote_average }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.vote_count.label }}</label>
+                    {{ form.vote_count }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.star.label }}</label>
+                    {{ form.star }}
+                </div>
+
+                {{ form.csrf_token }}
+                <div class="form-group">
+                    {{ form.submit }}
+                </div>
+            </form>
+        </div>
+    </section>
+    <!-- End: Content -->
+{% endblock %}

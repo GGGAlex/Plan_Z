@@ -1,0 +1,101 @@
+{% extends "home/layout.html" %}
+{% block content %}
+    <!-- Page title -->
+    <section id="page-title">
+        <div class="container">
+            <div class="page-title">
+                <h1>Movie Data Analysis</h1>
+            </div>
+            <div class="breadcrumb">
+                <ul>
+                    <li><a href="{{ url_for('home.index') }}">Index</a> </li>
+                    <li class="active"><a href="#">Data Analysis</a> </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <!-- End: Page title -->
+
+    <!-- Content -->
+    <section id="page-content">
+        <div class="container">
+            <h2>Years of Best Movies</h2>
+            <div id="best_movie" class="grid-layout post-5-columns m-b-30" data-item="post-item">
+            <!-- Post item-->
+                {% for movie in movies %}
+                <div class="post-item border">
+                    <div class="post-item-wrap">
+                        <div class="post-item-description">
+                            <h2><a href="#">{{ movie.release_date }}: {{ movie.title }}</a></h2>
+                            <p>Language: {{ movie.language }}</p>
+                            <p>Country: {{ movie.country }}</p>
+                            <p>Director: {{ movie.director }}</p>
+                            <p>Rating: {{ movie.vote_average }}/10.0</p>
+    {#                        <a href="#" class="item-link">Read More <i class="fa fa-arrow-right"></i></a>#}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            <!-- end: Post item-->
+            </div>
+        </div>
+        <div class="line"></div>
+
+        <section class="background-grey p-t-40 p-b-30">
+            <div class="container xs-text-center sm-text-center">
+                <h2>Top 4 countries with the most movies</h2>
+                <div class="row">
+                    {% for country in countries %}
+                    <div class="col-lg-3">
+                        <div class="text-center">
+                            <div class="counter text-lg"> <span data-speed="1000" data-refresh-interval="50" data-to="{{ country.count }}" data-from="0" data-seperator="true"></span> </div>
+                            <div class="seperator seperator-small"></div>
+                            <p>{{ country.country }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        <div class="line"></div>
+
+        <div class="container">
+            <h2>Bar Chart with Movie Types</h2>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div id="barchart"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End: Content -->
+    <script>
+        jQuery(document).ready(function () {
+            new Morris.Bar({
+                element: "barchart",
+                data: [{% for g in genres %}{
+                        "genre":'{{ g.genre }}',
+                        "count":{{ g.count }}
+                    },{% endfor %}],
+                xkey: "genre",
+                ykeys: ["count"],
+                labels: ["count"],
+                barGap: 0,
+                barSizeRatio: 1,
+                smooth: 1,
+                gridLineColor: "#e3e3e3",
+                numLines: 6,
+                fillOpacity: 1,
+                barColors: ["#4a81d4"]
+            });
+        });
+    </script>
+
+
+    <!-- Morris.js css -->
+    <link href="{{ url_for('static', filename='js/plugins/components/morrisjs/morris.css') }}" rel="stylesheet">
+    <!--Morris.js component-->
+    <script src="{{ url_for('static', filename='js/plugins/components/raphael.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/components/morrisjs/morris.min.js') }}"></script>
+
+{% endblock %}
