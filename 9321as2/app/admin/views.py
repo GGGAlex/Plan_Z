@@ -64,7 +64,7 @@ class Recommender:
 
 
 @api.route('/movies/<string:title>')
-@api.parm('title', 'The name of movies')
+@api.param('title', 'The name of movies')
 class Movies(Resource):
 
     @api.response(200, 'Successful')
@@ -135,21 +135,21 @@ class getMovies(Resource):
         return {"message": "Movie {} is created".format(movie_title)}, 201
         # return{'hello':'world'}
 
-@api.route('/movies/analysis/top5movies')
-class getTopMovies(Resource):
-    def get(self):
-        df['release_date'] = df['release_date'].str.replace('-', '')
-        df['release_date'] = df['release_date'].map(lambda x: int(x)//10000)
-        movie_of_year = df.groupby('release_date', group_keys=False).apply(lambda x: x.sort_values('vote_average',ascending=False))\
-                    .groupby('release_date').head(5)
-        movie_of_year.drop(['overview', 'writer', 'star', 'runtime', 'company',
-                        'genre', 'vote_count'], axis=1, inplace=True)
-        movie_of_year = movie_of_year[movie_of_year.release_date>2005].reset_index()
-        movie_of_year.drop(['index'], axis=1, inplace=True)
-        #movie_of_year = movie_of_year.groupby(by='release_date')
-        #topmovie = movie_of_year.to_json()
-        topmovie = movie_of_year.to_json(orient='records')
-        return json.loads(topmovie)
+# @api.route('/movies/analysis/top5movies')
+# class getTopMovies(Resource):
+#     def get(self):
+#         df['release_date'] = df['release_date'].str.replace('-', '')
+#         df['release_date'] = df['release_date'].map(lambda x: int(x)//10000)
+#         movie_of_year = df.groupby('release_date', group_keys=False).apply(lambda x: x.sort_values('vote_average',ascending=False))\
+#                     .groupby('release_date').head(5)
+#         movie_of_year.drop(['overview', 'writer', 'star', 'runtime', 'company',
+#                         'genre', 'vote_count'], axis=1, inplace=True)
+#         movie_of_year = movie_of_year[movie_of_year.release_date>2005].reset_index()
+#         movie_of_year.drop(['index'], axis=1, inplace=True)
+#         #movie_of_year = movie_of_year.groupby(by='release_date')
+#         #topmovie = movie_of_year.to_json()
+#         topmovie = movie_of_year.to_json(orient='records')
+#         return json.loads(topmovie)
 
 @api.route('/movies/analysis/general')
 class getMovietypes(Resource):
@@ -161,18 +161,21 @@ class getMovietypes(Resource):
         return json.loads(typemovie)
 
 
-@api.route('/movies/analysis/best_movie_year/<int:year>')
-@api.parm('year', 'The Target year')
-class getYearMovies(Resource):
 
-    @api.response(200, 'Successful')
+
+@api.route('/movies/analysis/best_movie_year/<int:year>')
+@api.param('year', 'The Target year')
+class getYearMovies(Resource):
     def get(self, year):
-        if year not in year_movie_df.index:
+        if year not in list(year_movie_df['release_date'].values):
             api.abort(404, "Movie {} doesn't exist".format(year))
             # add new movie link
-        movie = df.loc[year].to_json()
+        best_movie = year_movie_df.copy()
+        best_movie = year_movie_df.copy()
+        best_movie.set_index('release_date', inplace=True)
+        movie = (best_movie.loc[int(year)]).to_json(orient='records')
         # add new movie link
-        return movie
+        return json.loads(movie)
 
 
 @api.route('/movies/analysis/best_movie_year/')
@@ -183,7 +186,7 @@ class yearMovies(Resource):
 
 
 @api.route('/movies/analysis/country/<string:year>')
-@api.parm('year', 'The Target year')
+@api.param('year', 'The Target year')
 class analysisCountry(Resource):
     def get(self, year):
         country = df.copy()
@@ -211,7 +214,7 @@ class getCountryNum(Resource):
 
 
 @api.route('/recommand/<string:title>')
-@api.parm('title', 'Name of movies')
+@api.param('title', 'Name of movies')
 class recommandMovie(Resource):
 
     @api.doc(description='Make recomandation')
