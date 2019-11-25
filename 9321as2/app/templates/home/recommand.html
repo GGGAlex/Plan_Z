@@ -1,0 +1,58 @@
+{% extends "home/layout.html" %}
+{% block content %}
+    <!-- Page title -->
+    <section id="page-title">
+        <div class="container">
+            <div class="page-title">
+                <h1>Movie Recommand</h1>
+            </div>
+            <div class="breadcrumb">
+                <ul>
+                    <li><a href="{{ url_for('home.index') }}">Index</a> </li>
+                    <li class="active"><a href="#">Recommand</a> </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <!-- End: Page title -->
+    <!-- Content -->
+    <section id="page-content">
+        <div class="container col-lg-9">
+            <form action="{{ url_for('home.recommand') }}" method="post">
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">{{ form.recommand.label }}</label>
+                    {{ form.recommand }}
+                </div>
+
+                {{ form.csrf_token }}
+                <div class="form-group">
+                    {{ form.submit }}
+                </div>
+            </form>
+        </div>
+    <div class="container">
+            <div id="movie" class="grid-layout post-3-columns m-b-30" data-item="post-item">
+                {% for movie in recommands %}
+                <div class="post-item border">
+                    <div class="post-item-wrap">
+                        <div class="post-item-description">
+                            <h2><a href="#">{{ movie.title }}</a></h2>
+                            <span class="post-meta-date"><i class="fa fa-calendar-o"></i>release time: {{ movie.release_date }}</span>
+                            <p>Language: {{ movie.language }}</p>
+                            <p>Country: {{ movie.country }}</p>
+                            <p>Director: {{ movie.director }}</p>
+                            <p>Writer: {{ movie.writer }}</p>
+                            <p>Genre: {{ movie.genre }}</p>
+                            <p>Runtime: {{ movie.runtime }}</p>
+                            <p>Overview: {{ movie.overview }}</p>
+                            <p>Rating: {{ movie.vote_average }}/10.0</p>
+    {#                        <a href="#" class="item-link">Read More <i class="fa fa-arrow-right"></i></a>#}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <!-- End: Content -->
+{% endblock %}
