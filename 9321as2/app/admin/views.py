@@ -64,7 +64,11 @@ class Recommender:
 
 
 @api.route('/movies/<string:title>')
+@api.parm('title', 'The name of movies')
 class Movies(Resource):
+
+    @api.response(200, 'Successful')
+    @api.doc(description='Get Target Movie')
     def get(self, title):
         if title not in list(df['title'].values):
             api.abort(404, "Movie {} doesn't exist".format(title))
@@ -73,6 +77,8 @@ class Movies(Resource):
         movie = (df.loc[df['title'] == title]).to_json(orient='records')
         return json.loads(movie)
 
+    @api.response(200, 'Successful')
+    @api.doc(description='Delete A Movie')
     def delete(self, title):
         if title not in list(df['title'].values):
             api.abort(404, "Movie {} doesn't exist".format(title))
@@ -85,6 +91,7 @@ class Movies(Resource):
 
 @api.route('/movies/logging')
 class writeLogging(Resource):
+    @api.doc(description='Record logging file')
     @api.expect(log_model)
     def post(self):
         message = request.json
@@ -103,6 +110,7 @@ class getMovies(Resource):
         movies = df.to_json(orient='records')
         return json.loads(movies)
 
+    @api.doc(description='Post new movies')
     @api.expect(movie_model)
     def post(self):
         movie = request.json
@@ -154,7 +162,10 @@ class getMovietypes(Resource):
 
 
 @api.route('/movies/analysis/best_movie_year/<int:year>')
+@api.parm('year', 'The Target year')
 class getYearMovies(Resource):
+
+    @api.response(200, 'Successful')
     def get(self, year):
         if year not in year_movie_df.index:
             api.abort(404, "Movie {} doesn't exist".format(year))
@@ -172,6 +183,7 @@ class yearMovies(Resource):
 
 
 @api.route('/movies/analysis/country/<string:year>')
+@api.parm('year', 'The Target year')
 class analysisCountry(Resource):
     def get(self, year):
         country = df.copy()
@@ -189,6 +201,7 @@ class analysisCountry(Resource):
 
 @api.route('/movies/analysis/country')
 class getCountryNum(Resource):
+    @api.doc(description='Count movies by country')
     def get(self):
         country = df.copy()
         country = country['country'].value_counts().reset_index(name='country_count')
@@ -198,7 +211,10 @@ class getCountryNum(Resource):
 
 
 @api.route('/recommand/<string:title>')
+@api.parm('title', 'Name of movies')
 class recommandMovie(Resource):
+
+    @api.doc(description='Make recomandation')
     def get(self, title):
         a = Recommender()
         qu = a.improved_recommendations(title)
